@@ -27,8 +27,9 @@ class GameController: NSObject {
     let lander: SCNNode
     var selfieStick: SCNNode!
     var engineOn: Bool = true
-    var hud: SKScene!
-    var labelNode: SKLabelNode!
+    private var hud: SKScene!
+    private var labelNode: SKLabelNode!
+    private var throttle: SCNNumber = 0.0 // between 0 and 1
     
     init(sceneRenderer renderer: SCNSceneRenderer) {
         sceneRenderer = renderer
@@ -52,6 +53,7 @@ class GameController: NSObject {
     private func setupLander() {
         lander.physicsBody?.allowsResting = false // do not stop lander simulation when it becomes stationary
         lander.physicsBody?.damping = 0.0 // air resistance
+        lander.worldPosition = SCNVector3(0, 100, 0)
     }
     
     private func setupHUD() {
@@ -76,8 +78,15 @@ class GameController: NSObject {
         labelNode.text = "y: \(Int(height)), vy = \(Int(vSpeed))"
     }
     
-    func toggleEngine() {
-        engineOn.toggle()
+    func setThrottle(_ value: SCNNumber) {
+        throttle = value
+    }
+    
+    func engineForce() -> SCNVector3 {
+        let weight = SCNNumber(self.scene.physicsWorld.gravity.y)*SCNNumber(self.lander.physicsBody!.mass)
+        let full: SCNNumber = 2
+        let yForce = -full * throttle * weight
+        return SCNVector3(0, yForce, 0)
     }
 }
 
@@ -87,10 +96,7 @@ extension GameController: SCNSceneRendererDelegate {
         let landerPos = lander.presentation.worldPosition
         selfieStick.worldPosition = landerPos
         
-        if engineOn {
-            let weight = SCNNumber(self.scene.physicsWorld.gravity.y)*SCNNumber(self.lander.physicsBody!.mass)
-            lander.physicsBody?.applyForce(SCNVector3(0, (-1.5)*weight, 0), asImpulse: false)
-        }
+        lander.physicsBody?.applyForce(engineForce(), asImpulse: false)
         updateHUD()
     }
 }
