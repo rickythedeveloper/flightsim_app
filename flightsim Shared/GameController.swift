@@ -57,10 +57,12 @@ class GameController: NSObject {
     private func setupHUD() {
         let sceneView = sceneRenderer as! SCNView
         hud = SKScene(size: sceneView.bounds.size)
-        hud.backgroundColor = NSColor.blue
+        hud.backgroundColor = SCNColor.blue
         
         labelNode = SKLabelNode()
         labelNode.fontSize = 20
+        labelNode.fontName = "AvenirNext-Bold"
+        labelNode.fontColor = .black
         labelNode.position.y = 50
         labelNode.position.x = hud.size.width / 2
         hud.addChild(labelNode)
@@ -71,7 +73,7 @@ class GameController: NSObject {
     private func updateHUD() {
         let height = lander.presentation.worldPosition.y
         let vSpeed = lander.physicsBody!.velocity.y
-        labelNode.text = "y: \(Int(height)), vy = \(Double(round(100*vSpeed)/100))"
+        labelNode.text = "y: \(Int(height)), vy = \(Int(vSpeed))"
     }
     
     func toggleEngine() {
@@ -86,7 +88,7 @@ extension GameController: SCNSceneRendererDelegate {
         selfieStick.worldPosition = landerPos
         
         if engineOn {
-            let weight = self.scene.physicsWorld.gravity.y*self.lander.physicsBody!.mass
+            let weight = SCNNumber(self.scene.physicsWorld.gravity.y)*SCNNumber(self.lander.physicsBody!.mass)
             lander.physicsBody?.applyForce(SCNVector3(0, (-1.5)*weight, 0), asImpulse: false)
         }
         updateHUD()
