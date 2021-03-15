@@ -30,16 +30,10 @@ class GameViewController: NSViewController {
         // Configure the view
         self.gameView.backgroundColor = NSColor.black
         
-        // Add a click gesture recognizer
-        let clickGesture = NSClickGestureRecognizer(target: self, action: #selector(handleClick(_:)))
-        var gestureRecognizers = gameView.gestureRecognizers
-        gestureRecognizers.insert(clickGesture, at: 0)
-        self.gameView.gestureRecognizers = gestureRecognizers
-        
-        setupSlide()
+        setupSlider()
     }
     
-    private func setupSlide() {
+    private func setupSlider() {
         let slider = NSSlider(target: self, action: #selector(engineSliderChanged))
         let margin: CGFloat = 30
         slider.frame = NSRect(x: margin, y: margin, width: 50, height: self.view.bounds.height - margin*2)
@@ -50,11 +44,4 @@ class GameViewController: NSViewController {
     @objc func engineSliderChanged(sender: NSSlider) {
         gameController.setThrottle(SCNNumber(sender.floatValue))
     }
-    
-    @objc
-    func handleClick(_ gestureRecognizer: NSGestureRecognizer) {
-        // Highlight the clicked nodes
-        let p = gestureRecognizer.location(in: gameView)
-    }
-    
 }

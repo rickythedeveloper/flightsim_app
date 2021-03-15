@@ -36,8 +36,8 @@ class GameController: NSObject {
         scene = SCNScene(named: "Art.scnassets/main.scn")!
         lander = scene.rootNode.childNode(withName: "lander", recursively: true)!
         selfieStick = scene.rootNode.childNode(withName: "selfieStick", recursively: true)!
-        
         super.init()
+        
         setupScene()
         setupLander()
         setupHUD()
@@ -78,11 +78,13 @@ class GameController: NSObject {
         labelNode.text = "y: \(Int(height)), vy = \(Int(vSpeed))"
     }
     
+    /// Set the value for throttle (between 0 and 1)
     func setThrottle(_ value: SCNNumber) {
         throttle = value
     }
     
-    func engineForce() -> SCNVector3 {
+    /// Returns the force due to the engine.
+    private func engineForce() -> SCNVector3 {
         let weight = SCNNumber(self.scene.physicsWorld.gravity.y)*SCNNumber(self.lander.physicsBody!.mass)
         let full: SCNNumber = 2
         let yForce = -full * throttle * weight
