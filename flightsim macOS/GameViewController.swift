@@ -22,7 +22,7 @@ class GameViewController: NSViewController {
         self.gameController = GameController(sceneRenderer: gameView)
         
         // Allow the user to manipulate the camera
-        self.gameView.allowsCameraControl = true
+//        self.gameView.allowsCameraControl = true
         
         // Show statistics such as fps and timing information
         self.gameView.showsStatistics = true
@@ -41,7 +41,7 @@ class GameViewController: NSViewController {
     func handleClick(_ gestureRecognizer: NSGestureRecognizer) {
         // Highlight the clicked nodes
         let p = gestureRecognizer.location(in: gameView)
-        gameController.highlightNodes(atPoint: p)
+        gameController.toggleEngine()
     }
     
 }

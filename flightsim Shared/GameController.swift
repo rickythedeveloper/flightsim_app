@@ -6,6 +6,7 @@
 //
 
 import SceneKit
+import SpriteKit
 
 #if os(watchOS)
     import WatchKit
@@ -13,60 +14,81 @@ import SceneKit
 
 #if os(macOS)
     typealias SCNColor = NSColor
+    typealias SCNNumber = CGFloat
 #else
     typealias SCNColor = UIColor
+    typealias SCNNumber = Float
 #endif
 
-class GameController: NSObject, SCNSceneRendererDelegate {
+class GameController: NSObject {
 
     let scene: SCNScene
     let sceneRenderer: SCNSceneRenderer
+    let lander: SCNNode
+    var selfieStick: SCNNode!
+    var engineOn: Bool = true
+    var hud: SKScene!
+    var labelNode: SKLabelNode!
     
     init(sceneRenderer renderer: SCNSceneRenderer) {
         sceneRenderer = renderer
-        scene = SCNScene(named: "Art.scnassets/ship.scn")!
+        scene = SCNScene(named: "Art.scnassets/main.scn")!
+        lander = scene.rootNode.childNode(withName: "lander", recursively: true)!
+        selfieStick = scene.rootNode.childNode(withName: "selfieStick", recursively: true)!
         
         super.init()
-        
+        setupScene()
+        setupLander()
+        setupHUD()
         sceneRenderer.delegate = self
-        
-        if let ship = scene.rootNode.childNode(withName: "ship", recursively: true) {
-            ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
-        }
-        
         sceneRenderer.scene = scene
     }
     
-    func highlightNodes(atPoint point: CGPoint) {
-        let hitResults = self.sceneRenderer.hitTest(point, options: [:])
-        for result in hitResults {
-            // get its material
-            guard let material = result.node.geometry?.firstMaterial else {
-                return
-            }
-            
-            // highlight it
-            SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.5
-            
-            // on completion - unhighlight
-            SCNTransaction.completionBlock = {
-                SCNTransaction.begin()
-                SCNTransaction.animationDuration = 0.5
-                
-                material.emission.contents = SCNColor.black
-                
-                SCNTransaction.commit()
-            }
-            
-            material.emission.contents = SCNColor.red
-            
-            SCNTransaction.commit()
-        }
+    private func setupScene() {
+        scene.physicsWorld.speed = 1.0
+        scene.physicsWorld.gravity = SCNVector3(0, -9.81, 0)
     }
     
+    private func setupLander() {
+        lander.physicsBody?.allowsResting = false // do not stop lander simulation when it becomes stationary
+        lander.physicsBody?.damping = 0.0 // air resistance
+    }
+    
+    private func setupHUD() {
+        let sceneView = sceneRenderer as! SCNView
+        hud = SKScene(size: sceneView.bounds.size)
+        hud.backgroundColor = NSColor.blue
+        
+        labelNode = SKLabelNode()
+        labelNode.fontSize = 20
+        labelNode.position.y = 50
+        labelNode.position.x = hud.size.width / 2
+        hud.addChild(labelNode)
+        
+        sceneView.overlaySKScene = hud
+    }
+    
+    private func updateHUD() {
+        let height = lander.presentation.worldPosition.y
+        let vSpeed = lander.physicsBody!.velocity.y
+        labelNode.text = "y: \(Int(height)), vy = \(Double(round(100*vSpeed)/100))"
+    }
+    
+    func toggleEngine() {
+        engineOn.toggle()
+    }
+}
+
+extension GameController: SCNSceneRendererDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         // Called before each frame is rendered
+        let landerPos = lander.presentation.worldPosition
+        selfieStick.worldPosition = landerPos
+        
+        if engineOn {
+            let weight = self.scene.physicsWorld.gravity.y*self.lander.physicsBody!.mass
+            lander.physicsBody?.applyForce(SCNVector3(0, (-1.5)*weight, 0), asImpulse: false)
+        }
+        updateHUD()
     }
-
 }
