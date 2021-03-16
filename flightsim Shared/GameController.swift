@@ -25,6 +25,7 @@ class GameController: NSObject {
     let scene: SCNScene
     let sceneRenderer: SCNSceneRenderer
     let lander: SCNNode
+    var particleSystem: SCNParticleSystem!
     var selfieStick: SCNNode!
     var engineOn: Bool = true
     private var hud: SKScene!
@@ -41,6 +42,7 @@ class GameController: NSObject {
         setupScene()
         setupLander()
         setupHUD()
+        setupParticle()
         sceneRenderer.delegate = self
         sceneRenderer.scene = scene
     }
@@ -54,6 +56,8 @@ class GameController: NSObject {
         lander.physicsBody?.allowsResting = false // do not stop lander simulation when it becomes stationary
         lander.physicsBody?.damping = 0.0 // air resistance
         lander.worldPosition = SCNVector3(0, 100, 0)
+        lander.addChildNode(selfieStick)
+        selfieStick.position = SCNVector3(0,0,0)
     }
     
     private func setupHUD() {
@@ -70,6 +74,34 @@ class GameController: NSObject {
         hud.addChild(labelNode)
         
         sceneView.overlaySKScene = hud
+    }
+    
+    private func setupParticle() {
+        let particleScene = SCNScene(named: "Art.scnassets/particles.scn")!
+        let node: SCNNode = particleScene.rootNode.childNode(withName: "particles", recursively: true)!
+        particleSystem = node.particleSystems!.first!
+        
+        particleSystem.particleLifeSpan = 5
+        particleSystem.particleLifeSpanVariation = 2
+        
+        particleSystem.emittingDirection = SCNVector3(0, -1, 0)
+        particleSystem.spreadingAngle = 5
+        particleSystem.birthDirection = .constant
+        
+        particleSystem.particleSize = 0.1
+        particleSystem.particleSizeVariation = 0.1
+        
+        #if os(macOS)
+            let particleColor = NSColor(red: 1, green: 1, blue: 0, alpha: 1)
+        #else
+            let particleColor = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
+        #endif
+        particleSystem.particleColorVariation = SCNVector4(0,0,0,0)
+        particleSystem.particleColor = particleColor
+        particleSystem.particleBounce = 0.0
+        particleSystem.dampingFactor = 0.7
+        
+        lander.addParticleSystem(particleSystem)
     }
     
     private func updateHUD() {
@@ -90,15 +122,19 @@ class GameController: NSObject {
         let yForce = -full * throttle * weight
         return SCNVector3(0, yForce, 0)
     }
+    
+    func updateParticles() {
+        particleSystem.birthRate = CGFloat(2000 * throttle)
+        particleSystem.particleVelocity = CGFloat(max(0, 30 - lander.physicsBody!.velocity.y))
+    }
 }
 
 extension GameController: SCNSceneRendererDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         // Called before each frame is rendered
-        let landerPos = lander.presentation.worldPosition
-        selfieStick.worldPosition = landerPos
-        
         lander.physicsBody?.applyForce(engineForce(), asImpulse: false)
+        
+        updateParticles()
         updateHUD()
     }
 }
