@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		9C255A0025FD7AB200E49F7A /* SCNVector3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA375A425FD72CB001FEC89 /* SCNVector3.swift */; };
+		9C88824F26017039003B9B2F /* Lander.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C88824E26017039003B9B2F /* Lander.swift */; };
+		9C88825026017039003B9B2F /* Lander.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C88824E26017039003B9B2F /* Lander.swift */; };
 		9CA3757A25FCDAEE001FEC89 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA3757925FCDAEE001FEC89 /* AppDelegate.swift */; };
 		9CA3757C25FCDAEE001FEC89 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA3757B25FCDAEE001FEC89 /* GameViewController.swift */; };
 		9CA3757F25FCDAEE001FEC89 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9CA3757D25FCDAEE001FEC89 /* Main.storyboard */; };
@@ -25,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9C88824E26017039003B9B2F /* Lander.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lander.swift; sourceTree = "<group>"; };
 		9CA3756F25FCDAEE001FEC89 /* GameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 		9CA3757025FCDAEE001FEC89 /* Art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Art.scnassets; sourceTree = "<group>"; };
 		9CA3757125FCDAEE001FEC89 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -78,6 +81,7 @@
 				9CA3756F25FCDAEE001FEC89 /* GameController.swift */,
 				9CA3757025FCDAEE001FEC89 /* Art.scnassets */,
 				9CA3757125FCDAEE001FEC89 /* Assets.xcassets */,
+				9C88824E26017039003B9B2F /* Lander.swift */,
 			);
 			path = "flightsim Shared";
 			sourceTree = "<group>";
@@ -228,6 +232,7 @@
 				9CA375A525FD72CB001FEC89 /* SCNVector3.swift in Sources */,
 				9CA3757C25FCDAEE001FEC89 /* GameViewController.swift in Sources */,
 				9CA3759325FCDAEE001FEC89 /* GameController.swift in Sources */,
+				9C88824F26017039003B9B2F /* Lander.swift in Sources */,
 				9CA3757A25FCDAEE001FEC89 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -239,6 +244,7 @@
 				9CA3758D25FCDAEE001FEC89 /* GameViewController.swift in Sources */,
 				9C255A0025FD7AB200E49F7A /* SCNVector3.swift in Sources */,
 				9CA3759425FCDAEE001FEC89 /* GameController.swift in Sources */,
+				9C88825026017039003B9B2F /* Lander.swift in Sources */,
 				9CA3758B25FCDAEE001FEC89 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

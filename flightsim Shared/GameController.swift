@@ -25,8 +25,9 @@ class GameController: NSObject {
     let scene: SCNScene
     let sceneRenderer: SCNSceneRenderer
     let lander: SCNNode
+    private let cameras: [SCNNode]
+    private var cameraNum: Int = 0
     var particleSystem: SCNParticleSystem!
-    var selfieStick: SCNNode!
     var engineOn: Bool = true
     private var hud: SKScene!
     private var labelNode: SKLabelNode!
@@ -35,8 +36,11 @@ class GameController: NSObject {
     init(sceneRenderer renderer: SCNSceneRenderer) {
         sceneRenderer = renderer
         scene = SCNScene(named: "Art.scnassets/main.scn")!
+        
+        cameras = scene.rootNode.childNodes { (node, _) -> Bool in
+            return node.name!.contains("camera")
+        }
         lander = scene.rootNode.childNode(withName: "lander", recursively: true)!
-        selfieStick = scene.rootNode.childNode(withName: "selfieStick", recursively: true)!
         super.init()
         
         setupScene()
@@ -56,8 +60,6 @@ class GameController: NSObject {
         lander.physicsBody?.allowsResting = false // do not stop lander simulation when it becomes stationary
         lander.physicsBody?.damping = 0.0 // air resistance
         lander.worldPosition = SCNVector3(0, 100, 0)
-        lander.addChildNode(selfieStick)
-        selfieStick.position = SCNVector3(0,0,0)
     }
     
     private func setupHUD() {
@@ -126,6 +128,11 @@ class GameController: NSObject {
     func updateParticles() {
         particleSystem.birthRate = CGFloat(2000 * throttle)
         particleSystem.particleVelocity = CGFloat(max(0, 30 - lander.physicsBody!.velocity.y))
+    }
+    
+    func switchCamera() {
+        cameraNum += 1
+        sceneRenderer.pointOfView = cameras[cameraNum % cameras.count]
     }
 }
 

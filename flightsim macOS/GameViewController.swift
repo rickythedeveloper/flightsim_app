@@ -31,7 +31,11 @@ class GameViewController: NSViewController {
         self.gameView.backgroundColor = NSColor.black
         
         setupSlider()
+        
+        addClickGesture()
     }
+    
+    
     
     private func setupSlider() {
         let slider = NSSlider(target: self, action: #selector(engineSliderChanged))
@@ -41,7 +45,18 @@ class GameViewController: NSViewController {
         self.view.addSubview(slider)
     }
     
+    private func addClickGesture() {
+        let clickGesture = NSClickGestureRecognizer(target: self, action: #selector(handleClick(_:)))
+        gameView.gestureRecognizers.insert(clickGesture, at: 0)
+    }
+    
     @objc func engineSliderChanged(sender: NSSlider) {
         gameController.setThrottle(SCNNumber(sender.floatValue))
     }
+    
+    @objc
+    func handleClick(_ gestureRecognizer: NSGestureRecognizer) {
+        gameController.switchCamera()
+    }
+    
 }

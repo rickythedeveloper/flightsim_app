@@ -31,6 +31,7 @@ class GameViewController: UIViewController {
         self.gameView.backgroundColor = UIColor.black
         
         setupSlider()
+        setupTapGesture()
     }
     
     private func setupSlider() {
@@ -39,9 +40,22 @@ class GameViewController: UIViewController {
         self.view.addSubview(slider)
     }
     
+    private func setupTapGesture() {
+        // Add a tap gesture recognizer
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        var gestureRecognizers = gameView.gestureRecognizers ?? []
+        gestureRecognizers.insert(tapGesture, at: 0)
+        self.gameView.gestureRecognizers = gestureRecognizers
+    }
+    
     @objc private func engineSliderChanged(sender: UISlider) {
         let throttle = sender.value
         gameController.setThrottle(throttle)
+    }
+    
+    @objc
+    func handleTap(_ gestureRecognizer: UIGestureRecognizer) {
+        gameController.switchCamera()
     }
     
     override var shouldAutorotate: Bool {
